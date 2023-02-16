@@ -1,9 +1,9 @@
 colorama==0.4.6
 colorlog==6.7.0
-future==0.18.2
-git+https://github.com/jchanvfx/NodeGraphQt@0.4.0#egg=NodeGraphQt
-pip==22.3.1
+future==0.18.3
+git+https://github.com/jchanvfx/NodeGraphQt@0.5.2#egg=NodeGraphQt
+pip==23.0
 PySide2==5.15.2
-Qt.py>=1.3.0
-setuptools==65.5.1
+Qt.py==1.3.8
+setuptools==67.3.2
 shiboken2==5.15.2
