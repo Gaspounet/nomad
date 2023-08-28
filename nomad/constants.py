@@ -7,6 +7,7 @@ Docstring with information
 
 # Python Core Import
 from enum import Enum
+from enum import unique
 from types import DynamicClassAttribute
 
 # Third-party Imports
@@ -26,6 +27,12 @@ class VersionEnum(Enum):
 
 
 class ColorEnum(Enum):
+    def __init__(self, red: int, green: int, blue: int):
+        self.red = red
+        self.green = green
+        self.blue = blue
+        self.color = (red, green, blue)
+
     @DynamicClassAttribute
     def value(self) -> tuple:
         return super(ColorEnum, self).value
@@ -39,14 +46,14 @@ class NodeStatus(ColorEnum):
     WORKING = (127, 127, 0)
     COMPLETE = (0, 127, 0)
     ERROR = (200, 0, 0)
-    DISABLED = (50, 50, 50)
+    DISABLED = (50, 0, 0)
 
 
-class PortTypeColor(ColorEnum):
+class PortType(ColorEnum):
     """
     Type to Color association
     """
-    exec = (127, 127, 127)
-    int = (255, 0, 0)
-    float = (127, 127, 0)
-    str = (0, 255, 0)
+    EXEC = (127, 127, 127)
+    INT = (255, 0, 0)
+    FLOAT = (127, 127, 0)
+    STRING = (0, 255, 0)

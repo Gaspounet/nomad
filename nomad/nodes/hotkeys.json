@@ -1,0 +1,10 @@
+[
+  {
+    "type":"command",
+    "label":"Execute",
+    "file":"../nomad/nodes/base_nodes/exec_node.py",
+    "function_name":"execute",
+    "node_type": "nomad.base.ExecNode",
+    "shortcut": ""
+  }
+]
