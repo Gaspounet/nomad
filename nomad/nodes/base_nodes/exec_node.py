@@ -7,13 +7,10 @@ Base exec node to execute code
 
 # Python Core Import
 import logging
-from typing import Any
 
-import NodeGraphQt
 # Third-party Imports
-from PySide2.QtCore import Slot
+from NodeGraphQt.constants import NodePropWidgetEnum
 from NodeGraphQt.nodes.base_node import BaseNode
-from NodeGraphQt.nodes.group_node import GroupNode
 from NodeGraphQt.qgraphics.node_base import NodeItem
 
 # Nomad Imports
@@ -22,25 +19,22 @@ from nomad.constants import PortType, NodeStatus
 
 
 class ExecNode(BaseNode):
-    __identifier__ = 'nomad.base'
-    NODE_NAME = 'nomad.base.ExecNode'
+    __identifier__ = f'{__module_name__}.base'
+    NODE_NAME = f'{__identifier__}.ExecNode'
 
     def __init__(self, qgraphics_item=None):
         super(ExecNode, self).__init__(qgraphics_item or NodeItem)
         self.add_input(name='in', port_type=PortType.EXEC, multi_input=True, display_name=False, )
         self.add_output(name='out', port_type=PortType.EXEC, multi_output=True, display_name=False)
-        self._command_line = 'print(\'Hello World\')'
-        self._status = NodeStatus.IDLE
-        self.model.add_property('status', NodeStatus.IDLE)
-        self._payload = {}
-        print(__module_name__, self.__class__, self.name())
-        self._logger = logging.getLogger('{}.{}.{}'.format(__module_name__, self.name(), self.get_property('id')))
+        self.create_property('status', NodeStatus.IDLE.name, widget_type=NodePropWidgetEnum.QLABEL.value, tab='Properties')
+        self.create_property('payload', {})
+        self.create_property('script', 'self.info("Hello World")', widget_type=NodePropWidgetEnum.QTEXT_EDIT.value, tab='Properties')
+        self._logger = logging.getLogger(f'{self.name()}.{self.id}')
         self.debug = self._logger.debug
         self.info = self._logger.info
         self.warning = self._logger.warning
         self.error = self._logger.error
         self.critical = self._logger.critical
-        self.debug('Init')
 
     def add_input(self, name='input', port_type=None, multi_input=False, display_name=True, locked=False,
                   painter_func=None):
@@ -90,22 +84,27 @@ class ExecNode(BaseNode):
             raise TypeError('port_type argument needs to be of type constants.PortType')
         return super().add_output(name, multi_output, display_name, port_type.color, locked, painter_func)
 
-    @Slot(NodeGraphQt.NodeGraph, NodeGraphQt.BaseNode)
-    def execute(self, node):
+    def execute(self):
         """Execute the current node and previous base_nodes if not disabled or complete"""
         self.pre_execute()
         if not self.disabled():
             self.status = NodeStatus.WORKING
-            self.on_execute()
-            self.post_execute()
+            try:
+                self.on_execute()
+            except:
+                self.status = NodeStatus.ERROR
+                raise
+            else:
+                self.post_execute()
 
     def pre_execute(self):
         for port in self.get_input('in').connected_ports():
             if port.node().status == NodeStatus.IDLE:
-                ExecNode.execute(self, port.node())
+                port.node().execute()
 
     def on_execute(self):
-        self.debug('Hello World, I\'m {}'.format(self.name()))
+        script: str = self.get_property('script')
+        exec(script)
 
     def post_execute(self):
         self.status = NodeStatus.COMPLETE
@@ -113,7 +112,7 @@ class ExecNode(BaseNode):
     @property
     def status(self) -> NodeStatus:
         """Get the status of the current node"""
-        return self._status
+        return NodeStatus.__getitem__(self.get_property('status'))
 
     @status.setter
     def status(self, status: NodeStatus):
@@ -123,30 +122,12 @@ class ExecNode(BaseNode):
         elif status != NodeStatus.DISABLED and self.disabled():
             self.set_disabled(False)
         else:
-            self._status = status
-            self.set_property('status', status)
+            self.set_property('status', status.name)
             self.set_color(*status.color)
-
-    # Logger management
-
-    def debug(self, message: str):
-        self._logger.debug(message)
-
-    def info(self, message: str):
-        self._logger.info(message)
-
-    def warning(self, message: str):
-        self._logger.warning(message)
-
-    def error(self, message: str):
-        self._logger.error(message)
-
-    def critical(self, message: str):
-        self._logger.critical(message)
 
 
 def execute(graph, node):
-    node.execute(node)
+    node.execute()
 
 
 def disable(graph, node):

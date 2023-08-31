@@ -35,7 +35,7 @@ class ColorEnum(Enum):
 
     @DynamicClassAttribute
     def value(self) -> tuple:
-        return super(ColorEnum, self).value
+        return super().value
 
 
 class NodeStatus(ColorEnum):

@@ -15,7 +15,3 @@ from NodeGraphQt.base.model import NodeModel
 
 if __name__ == "__main__":
     pass
-
-
-class ExecNodeModel(NodeModel):
-    pass
