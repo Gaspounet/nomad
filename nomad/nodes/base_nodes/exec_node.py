@@ -28,7 +28,13 @@ class ExecNode(BaseNode):
         self.add_output(name='out', port_type=PortType.EXEC, multi_output=True, display_name=False)
         self.create_property('status', NodeStatus.IDLE.name, widget_type=NodePropWidgetEnum.QLABEL.value, tab='Properties')
         self.create_property('payload', {})
-        self.create_property('script', 'self.info("Hello World")', widget_type=NodePropWidgetEnum.QTEXT_EDIT.value, tab='Properties')
+        self.create_property(
+            'script',
+            'self.info("Hello World")',
+            widget_type=NodePropWidgetEnum.QTEXT_EDIT.value,
+            tab='Properties',
+            widget_tooltip='Code that will run when Executing the node'
+        )
         self._logger = logging.getLogger(f'{self.name()}.{self.id}')
         self.debug = self._logger.debug
         self.info = self._logger.info

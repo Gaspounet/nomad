@@ -2,8 +2,16 @@
   {
     "type":"command",
     "label":"Execute",
-    "file":"../nomad/nodes/base_nodes/exec_node.py",
+    "file":"E:/WORK/CODING/packages/nomad/nomad/nodes/base_nodes/exec_node.py",
     "function_name":"execute",
+    "node_type": "nomad.base.ExecNode",
+    "shortcut": ""
+  },
+  {
+    "type":"command",
+    "label":"Disable/Enable",
+    "file":"E:/WORK/CODING/packages/nomad/nomad/nodes/base_nodes/exec_node.py",
+    "function_name":"disable",
     "node_type": "nomad.base.ExecNode",
     "shortcut": ""
   }
